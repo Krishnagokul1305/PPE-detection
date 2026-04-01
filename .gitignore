@@ -1,0 +1,37 @@
+# Python Environments
+env/
+venv/
+.env
+
+# Python Caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ML Models and Weights
+*.pt
+*.pth
+*.onnx
+*.weights
+
+# Data and Outputs
+output/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.jpg
+*.jpeg
+*.png
+*.csv
+
+# Java
+*.class
+*.jar
+
+# IDE and OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
