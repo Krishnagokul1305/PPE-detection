@@ -22,10 +22,10 @@ def center_in_box(item_box, person_box):
 model = YOLO("models/best.pt")
 
 # Paths
-video_path = Path("/home/tr_25-043_gokul/Downloads/ppe_personal_protection_equipment_dataset_for_object_detection_720P.mp4")
+video_path = Path("/home/tr_25-043_gokul/Downloads/PPE/ppe_personal_protection_equipment_dataset_for_object_detection_720P.mp4")
 output_dir = Path("output")
 output_dir.mkdir(exist_ok=True)
-output_video_path = output_dir / "ppe_detection_output_16.mp4"
+output_video_path = output_dir / "ppe_detection_output_22.mp4"
 
 # Video setup
 cap = cv2.VideoCapture(str(video_path))
@@ -61,9 +61,12 @@ while True:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             class_id = int(box.cls[0])
             class_name = model.names[class_id].lower()
+            confidence = float(box.conf[0])
 
             if "person" in class_name:
-                persons.append((x1, y1, x2, y2))
+                # Skip person detections with confidence <= 0.35
+                if confidence > 0.35:
+                    persons.append((x1, y1, x2, y2))
             elif "vest" in class_name and "no" not in class_name:
                 vests.append((x1, y1, x2, y2))
             elif "hardhat" in class_name and "no" not in class_name:
@@ -79,6 +82,10 @@ while True:
 
         x1, y1, x2, y2 = person_box
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+
+        # Add label showing PPE status
+        ppe_label = "PPE present" if (has_vest and has_hardhat) else "No PPE"
+        cv2.putText(frame, ppe_label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
         vest_status = "HAS VEST ✓" if has_vest else "NO VEST ✗"
         hardhat_status = "HAS HARDHAT ✓" if has_hardhat else "NO HARDHAT ✗"

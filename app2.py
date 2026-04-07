@@ -9,13 +9,13 @@ if platform.system() != 'Windows':
     pathlib.WindowsPath = pathlib.PosixPath
 
 # ✅ Load YOLOv8 model
-model = YOLO("models/ppe.pt")
+model = YOLO("models/best.pt")
 
 # Paths
-video_path = Path("/home/tr_25-043_gokul/Downloads/ppe_personal_protection_equipment_dataset_for_object_detection_720P.mp4")
+video_path = Path("data/ppe3.mp4")
 output_dir = Path("output")
 output_dir.mkdir(exist_ok=True)
-output_video_path = output_dir / "ppe_detection_output_14.mp4"
+output_video_path = output_dir / "ppe_detection_output_15.mp4"
 
 # Video setup
 cap = cv2.VideoCapture(str(video_path))
@@ -50,6 +50,10 @@ while True:
             class_id = int(box.cls[0])
             class_name = model.names[class_id].lower()
             confidence = float(box.conf[0])
+
+            # Skip person detections with confidence <= 0.35
+            if class_name == "person" and confidence <= 0.35:
+                continue
 
             detections.append({
                 'class': class_name,
